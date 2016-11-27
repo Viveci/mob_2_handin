@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Achtung!</string>
+
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="title">Achtung! Curve it</string>
+
+    <string name="play">Lets play</string>
+    <string name="host">Start hosting</string>
+    <string name="scoreboard">Scoreboard</string>
+    <string name="settings">Settings</string>
+</resources>
