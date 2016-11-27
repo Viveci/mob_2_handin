@@ -3,12 +3,8 @@ package com.example.user.achtung;
     import android.content.Context;
     import android.graphics.Bitmap;
     import android.graphics.Canvas;
-    import android.graphics.Color;
     import android.graphics.Paint;
-    import android.graphics.Path;
-    import android.graphics.Rect;
     import android.os.Handler;
-    import android.os.Looper;
     import android.util.AttributeSet;
     import android.view.MotionEvent;
     import android.view.View;
@@ -23,7 +19,7 @@ public class CanvasView extends View{
     private Paint mPaint;
     private float mX, mY;
     private static final float TOLERANCE = 2;
-    private static final int SPEED = 5;
+    private static final int SPEED = 50;
     private Paint paint = new Paint();
 
     private int[][] obstacles;
