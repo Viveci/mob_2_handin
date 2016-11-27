@@ -1,18 +1,25 @@
 package com.example.user.achtung;
 
-    import android.content.Context;
-    import android.graphics.Bitmap;
-    import android.graphics.Canvas;
-    import android.graphics.Paint;
-    import android.os.Handler;
-    import android.util.AttributeSet;
-    import android.view.MotionEvent;
-    import android.view.View;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.os.Handler;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+/*
+import java.lang.Object;
 
-    import java.util.Random;
+import java.awt.*;
+import java.util.*;
+import java.awt.Rectangle; */
 
-public class CanvasView extends View{
 
+public class CanvasView extends View {
+
+    private Player player;
     private Bitmap mBitmap;
     private Canvas mCanvas;
     Context context;
@@ -22,15 +29,20 @@ public class CanvasView extends View{
     private static final int SPEED = 50;
     private Paint paint = new Paint();
 
-    private int[][] obstacles;
-    private Random rand;
+    private int playerY, width, height, playerX, score;
 
     public CanvasView(Context c, AttributeSet attrs) {
         super(c, attrs);
         context = c;
         paint.setStyle(Paint.Style.FILL);
-        obstacles = new int[3][2];
-        rand = new Random();
+        playerY = mCanvas.getHeight() - 20;
+        width = mCanvas.getWidth();
+        height = 5;
+        playerX = (mCanvas.getWidth()) / 2;
+        score = 0;
+
+//        obstacles = new int[3][2];
+//        rand = new Random();
     }
 
     // override onSizeChanged
@@ -39,31 +51,50 @@ public class CanvasView extends View{
         super.onSizeChanged(w, h, oldw, oldh);
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
-        mX = mCanvas.getWidth()/2;
-        mY = mCanvas.getHeight()-300;
+        mX = mCanvas.getWidth() / 2;
+        mY = mCanvas.getHeight() - 300;
     }
 
     // override onDraw
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawCircle(mX,mY,30,paint);
-        for (int i = 0; i < obstacles.length; i++) {
-            canvas.drawCircle(obstacles[i][0], obstacles[i][1], 30, paint);
-        }
         updateView.run();
     }
 
     Handler viewHandler = new Handler();
-    Runnable updateView = new Runnable(){
+    Runnable updateView = new Runnable() {
         @Override
-        public void run(){
-            for (int i = 0; i < obstacles.length; i++){
-                obstacles[i][0] = mCanvas.getWidth()/2;
-                obstacles[i][1]++;
+        public void run() {
+            int left = (int) ((Math.random() * width));
+            int right = left + 50;
+            int height = 5;
+            int bottom = 0;
+            while (true) {
+                mCanvas.drawRect(left, height, right, bottom, paint);
+                if (playerY >= height && playerY <=bottom) {
+                    if (!(playerX <= left && playerX>=right)) {
+                        player.addScore(score);
+                        return;
+                    }
+                }
+                if(height > playerY){
+                    mCanvas.drawColor(Color.BLACK);
+                    return;
+                }
+                mCanvas.drawRect(left, height +1, right, bottom +1, paint);
+                notifyAll();
+                try {
+                    wait(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                invalidate();
+                viewHandler.postDelayed(updateView, SPEED);
             }
-            invalidate();
-            viewHandler.postDelayed(updateView, SPEED);
+           // int timer = Math.random(1, 3) * 1000;
+
+           // Thread.sleep(timer);
         }
     };
 
@@ -89,7 +120,7 @@ public class CanvasView extends View{
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
-        float y = event.getY();
+        int y = playerY;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -105,6 +136,7 @@ public class CanvasView extends View{
                 invalidate();
                 break;
         }
+        playerX = (int) x;
         return true;
     }
 }
